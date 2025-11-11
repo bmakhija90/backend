@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<JwtService>();
 
+/*
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -27,7 +28,7 @@ builder.Services.AddCors(options =>
            .AllowCredentials();  // This works with specific origins
     });
 });
-
+*/
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -55,7 +56,7 @@ builder.Services.AddControllers();
 
 
 var app = builder.Build();
-app.UseCors("AllowProduction");
+//app.UseCors("AllowProduction");
 
 app.UseAuthentication();
 app.UseAuthorization();
