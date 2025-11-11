@@ -16,9 +16,14 @@ builder.Services.AddCors(options =>
     // For production, add your production Angular app URL
     options.AddPolicy("AllowProduction", policy =>
     {
-        policy.AllowAnyOrigin()
-             .AllowAnyHeader()
-             .AllowAnyMethod();
+        policy.WithOrigins(
+               "http://localhost:4200",    
+               "https://localhost:4200",   
+               "https://admin.kirtilondon.co.uk"     
+           )
+           .AllowAnyHeader()
+           .AllowAnyMethod()
+           .AllowCredentials();  // This works with specific origins
     });
 });
 
