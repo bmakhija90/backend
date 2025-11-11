@@ -1,4 +1,3 @@
-
 using EcommerceAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,26 +9,20 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<MongoDbService>();
 builder.Services.AddSingleton<JwtService>();
 
-/*
-// Add CORS services
+// Add CORS services for Development only
 builder.Services.AddCors(options =>
 {
-    // For production, add your production Angular app URL
-    options.AddPolicy("AllowProduction", policy =>
+    options.AddPolicy("DevelopmentCors", policy =>  // Renamed for clarity
     {
         policy.WithOrigins(
-               "http://localhost:4200",    
-               "https://localhost:4200",
-                "https://admin.kirtilondon.co.uk",      // Your Angular app
-                "https://www.admin.kirtilondon.co.uk"  // WWW version    
+               "http://localhost:4200",
+               "https://localhost:4200"
            )
            .AllowAnyHeader()
            .AllowAnyMethod()
-           .AllowCredentials();  // This works with specific origins
+           .AllowCredentials();
     });
 });
-*/
-
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -47,16 +40,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-
-
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 
-
-
-
 var app = builder.Build();
-//app.UseCors("AllowProduction");
+
+// CORS only in Development - Nginx handles it in Production
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("DevelopmentCors");  // Updated policy name
+    Console.WriteLine(" CORS enabled for Development environment");
+}
+else
+{
+    Console.WriteLine(" CORS disabled - Nginx handles CORS in Production");
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
