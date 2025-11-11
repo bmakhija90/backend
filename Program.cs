@@ -18,8 +18,9 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                "http://localhost:4200",    
-               "https://localhost:4200",   
-               "https://admin.kirtilondon.co.uk"     
+               "https://localhost:4200",
+                "https://admin.kirtilondon.co.uk",      // Your Angular app
+                "https://www.admin.kirtilondon.co.uk"  // WWW version    
            )
            .AllowAnyHeader()
            .AllowAnyMethod()
