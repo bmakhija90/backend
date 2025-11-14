@@ -36,15 +36,15 @@ namespace EcommerceAPI.Controllers
                 if (product == null)
                     return BadRequest($"Product {itemDto.ProductId} not found");
 
-                var size = product.Sizes.FirstOrDefault(s => s == itemDto.SizeLabel);
+                var size = product.Sizes.FirstOrDefault(s => s == "L");
                 
 
                 var price = product.BasePrice;
                 items.Add(new OrderItem
                 {
                     ProductId = product.Id,
-                    ProductName = product.Name,
-                    SizeLabel = itemDto.SizeLabel,
+                    Name = product.Name,
+                    Size = "",
                     Quantity = itemDto.Quantity,
                     Price = price
                 });
@@ -55,7 +55,7 @@ namespace EcommerceAPI.Controllers
             {
                 UserId = userId,
                 Items = items,
-                TotalAmount = total
+                Total = total
             };
 
             await _db.Orders.InsertOneAsync(order);
@@ -64,7 +64,7 @@ namespace EcommerceAPI.Controllers
             return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, new OrderResponseDto
             {
                 Id = order.Id,
-                TotalAmount = order.TotalAmount,
+                TotalAmount = order.Total,
                 CreatedAt = order.CreatedAt
             });
         }

@@ -1,6 +1,8 @@
+using EcommerceAPI.Repositories;
 using EcommerceAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Driver;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +18,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                "http://localhost:4200",
-               "https://localhost:4200"
+               "https://localhost:4200",
+               "http://localhost:3000"
            )
            .AllowAnyHeader()
            .AllowAnyMethod()
@@ -42,6 +45,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+
+// Configure MongoDB
+builder.Services.AddSingleton<IMongoClient>(serviceProvider =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("MongoDB");
+    return new MongoClient(connectionString);
+});
+
+builder.Services.AddScoped(serviceProvider =>
+{
+    var client = serviceProvider.GetRequiredService<IMongoClient>();
+    var databaseName = builder.Configuration["MongoDB:DatabaseName"];
+    return client.GetDatabase(databaseName);
+});
+
+// Register repositories and services
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+
 
 var app = builder.Build();
 
